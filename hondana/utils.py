@@ -26,7 +26,19 @@ from __future__ import annotations
 import json
 import pathlib
 from functools import wraps
-from typing import TYPE_CHECKING, Any, Callable, Mapping, Optional, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Iterator,
+    Mapping,
+    Optional,
+    TypeVar,
+    Union,
+    overload,
+    AsyncIterator,
+    Iterator,
+)
 
 from .errors import AuthenticationRequired
 
@@ -39,6 +51,8 @@ if TYPE_CHECKING:
 
 C = TypeVar("C", bound="Client")
 T = TypeVar("T")
+Y = TypeVar("Y")
+_Iter = Union[Iterator[Y], AsyncIterator[Y]]
 if TYPE_CHECKING:
     B = ParamSpec("B")
 
@@ -95,6 +109,68 @@ def php_query_builder(obj: Mapping[str, Optional[Union[str, int, bool, list[str]
             fmt.extend(f"{key}[{subkey}]={subvalue}" for subkey, subvalue in value.items())
 
     return "&".join(fmt)
+
+
+def _chunk(iterator: Iterator[Y], max_size: int) -> Iterator[list[Y]]:
+    ret = []
+    n = 0
+    for item in iterator:
+        ret.append(item)
+        n += 1
+        if n == max_size:
+            yield ret
+            ret = []
+            n = 0
+    if ret:
+        yield ret
+
+
+async def _achunk(iterator: AsyncIterator[Y], max_size: int) -> AsyncIterator[list[Y]]:
+    ret = []
+    n = 0
+    async for item in iterator:
+        ret.append(item)
+        n += 1
+        if n == max_size:
+            yield ret
+            ret = []
+            n = 0
+    if ret:
+        yield ret
+
+
+@overload
+def as_chunks(iterator: Iterator[Y], max_size: int) -> Iterator[list[Y]]:
+    ...
+
+
+@overload
+def as_chunks(iterator: AsyncIterator[Y], max_size: int) -> AsyncIterator[list[Y]]:
+    ...
+
+
+def as_chunks(iterator: _Iter[Y], max_size: int) -> _Iter[list[Y]]:
+    """A helper function that collects an iterator into chunks of a given size.
+    .. versionadded:: 2.0
+    Parameters
+    ----------
+    iterator: Union[:class:`collections.abc.Iterator`, :class:`collections.abc.AsyncIterator`]
+        The iterator to chunk, can be sync or async.
+    max_size: :class:`int`
+        The maximum chunk size.
+    .. warning::
+        The last chunk collected may not be as large as ``max_size``.
+    Returns
+    --------
+    Union[:class:`Iterator`, :class:`AsyncIterator`]
+        A new iterator which yields chunks of a given size.
+    """
+    if max_size <= 0:
+        raise ValueError("Chunk sizes must be greater than 0.")
+
+    if isinstance(iterator, AsyncIterator):
+        return _achunk(iterator, max_size)
+    return _chunk(iterator, max_size)
 
 
 path: pathlib.Path = _PROJECT_DIR.parent / "extras" / "tags.json"

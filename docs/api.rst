@@ -7,6 +7,10 @@ Client
 ------
 .. autoclass:: Client
     :members:
+    :exclude-members: upload_chapter
+
+    .. automethod:: hondana.Client.upload_chapter
+        :async-with:
 
 
 API Models

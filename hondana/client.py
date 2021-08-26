@@ -40,6 +40,7 @@ from .legacy import LegacyItem
 from .manga import Manga
 from .report import Report
 from .scanlator_group import ScanlatorGroup
+from .upload import ChapterUpload
 from .user import User
 from .utils import MISSING, require_authentication
 
@@ -2432,3 +2433,19 @@ class Client:
             The specified report UUID or object UUID does not exist.
         """
         await self._http._create_report(report_category=report_category, reason=reason, object_id=object_id, details=details)
+
+    @require_authentication
+    def upload_chapter(self, manga_id: str, /, *, scanlator_groups: Optional[list[str]] = None) -> ChapterUpload:
+        """Returns a context manager that allows you to open an upload session to MangaDex with some added sanity.
+
+        Parameters
+        -----------
+        manga_id: :class:`str`
+            The manga UUID we are going to be uploading a chapter for.
+        scanlator_groups: Optional[List[:class:`str`]]
+            The list of scanlator group UUIDs to attribute this chapter to. Maximum of 5.
+        """
+        if scanlator_groups:
+            scanlator_groups = scanlator_groups[:5]
+
+        return ChapterUpload(http=self._http, manga_id=manga_id, scanlator_groups=scanlator_groups)
