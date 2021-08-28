@@ -29,6 +29,7 @@ from functools import wraps
 from typing import (
     TYPE_CHECKING,
     Any,
+    AsyncIterator,
     Callable,
     Iterator,
     Mapping,
@@ -36,8 +37,6 @@ from typing import (
     TypeVar,
     Union,
     overload,
-    AsyncIterator,
-    Iterator,
 )
 
 from .errors import AuthenticationRequired

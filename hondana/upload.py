@@ -26,15 +26,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional, Type, TypeVar, Union
 
+import aiohttp
+
 from .errors import NotFound, UploadInProgress, UploadMangaNotFound
 from .http import Route
 from .utils import as_chunks
-import aiohttp
 
 
 if TYPE_CHECKING:
-    from types import TracebackType
     from io import BufferedIOBase
+    from types import TracebackType
 
     from .http import HTTPClient
     from .types.upload import UploadBeginResponse, UploadImageResponse
