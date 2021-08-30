@@ -218,6 +218,7 @@ class Client:
         limit: int = 100,
         offset: int = 0,
         translated_languages: Optional[list[str]] = None,
+        content_rating: Optional[list[common.ContentRating]] = None,
         created_at_since: Optional[datetime.datetime] = None,
         updated_at_since: Optional[datetime.datetime] = None,
         published_at_since: Optional[datetime.datetime] = None,
@@ -235,8 +236,10 @@ class Client:
         offset: :class:`int`
             Defaults to 0. This is the pagination offset, the number must be greater than 0.
             If set lower than 0 then it is set to 0.
-        translated_languages: Optional[list[:class:`str`]]
+        translated_languages: Optional[List[:class:`str`]]
             A list of language codes to return chapters for.
+        content_rating: Optional[List[:class:`~hondana.types.ContentRating`]]
+            The content rating to filter the feed by.
         created_at_since: Optional[:class:`datetime.datetime`]
             A start point to return chapters from based on their creation date.
         updated_at_since: Optional[:class:`datetime.datetime`]
@@ -274,6 +277,7 @@ class Client:
             limit=limit,
             offset=offset,
             translated_languages=translated_languages,
+            content_rating=content_rating,
             created_at_since=created_at_since,
             updated_at_since=updated_at_since,
             published_at_since=published_at_since,
@@ -566,7 +570,7 @@ class Client:
         last_volume: Optional[str] = MISSING,
         last_chapter: Optional[str] = MISSING,
         publication_demographic: Optional[manga.PublicationDemographic] = MISSING,
-        status: Optional[manga.MangaStatus] = MISSING,
+        status: manga.MangaStatus,
         year: Optional[int] = MISSING,
         content_rating: Optional[manga.ContentRating] = None,
         tags: Optional[QueryTags] = None,
@@ -707,6 +711,7 @@ class Client:
         limit: int = 100,
         offset: int = 0,
         translated_languages: Optional[list[str]] = None,
+        content_rating: Optional[list[common.ContentRating]] = None,
         created_at_since: Optional[datetime.datetime] = None,
         updated_at_since: Optional[datetime.datetime] = None,
         published_at_since: Optional[datetime.datetime] = None,
@@ -727,6 +732,8 @@ class Client:
             Defaults to 0. The pagination offset for the request.
         translated_languages: List[:class:`str`]
             A list of language codes to filter the returned chapters with.
+        content_rating: Optional[List[:class:`~hondana.types.ContentRating`]]
+            The content rating to filter the feed by.
         created_at_since: Optional[:class:`datetime.datetime`]
             A start point to return chapters from based on their creation date.
         updated_at_since: Optional[:class:`datetime.datetime`]
@@ -755,6 +762,7 @@ class Client:
             limit=limit,
             offset=offset,
             translated_languages=translated_languages,
+            content_rating=content_rating,
             created_at_since=created_at_since,
             updated_at_since=updated_at_since,
             published_at_since=published_at_since,
@@ -914,6 +922,7 @@ class Client:
         volume: Optional[Union[str, list[str]]] = None,
         chapter: Optional[Union[str, list[str]]] = None,
         translated_language: Optional[list[str]] = None,
+        content_rating: Optional[list[common.ContentRating]] = None,
         created_at_since: Optional[datetime.datetime] = None,
         updated_at_since: Optional[datetime.datetime] = None,
         published_at_since: Optional[datetime.datetime] = None,
@@ -946,6 +955,8 @@ class Client:
             The chapter UUID or UUIDs to limit the request with.
         translated_language: Optional[List[:class:`str`]]
             The list of languages codes to filter the request with.
+        content_rating: Optional[List[:class:`~hondana.types.ContentRating`]]
+            The content rating to filter the feed by.
         created_at_since: Optional[:class:`datetime.datetime`]
             A start point to return chapters from based on their creation date.
         updated_at_since: Optional[:class:`datetime.datetime`]
@@ -988,6 +999,7 @@ class Client:
             volume=volume,
             chapter=chapter,
             translated_language=translated_language,
+            content_rating=content_rating,
             created_at_since=created_at_since,
             updated_at_since=updated_at_since,
             published_at_since=published_at_since,

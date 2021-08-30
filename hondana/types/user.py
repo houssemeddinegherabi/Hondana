@@ -39,10 +39,13 @@ class GetUserAttributesResponse(TypedDict):
     username: :class:`str`
 
     version: :class:`int`
+
+    roles: List[:class:`str`]
     """
 
     username: str
     version: int
+    roles: list[str]
 
 
 class UserResponse(TypedDict):
@@ -57,6 +60,7 @@ class UserResponse(TypedDict):
     id: str
     type: Literal["user"]
     attributes: GetUserAttributesResponse
+    relationships: list[RelationshipResponse]
 
 
 class GetUserResponse(TypedDict):
@@ -70,7 +74,6 @@ class GetUserResponse(TypedDict):
 
     result: Literal["ok"]
     data: UserResponse
-    relationships: list[RelationshipResponse]
 
 
 class GetUserListResponse(TypedDict):

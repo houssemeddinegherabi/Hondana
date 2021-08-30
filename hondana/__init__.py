@@ -44,7 +44,6 @@ from .manga import Manga as Manga
 from .report import *
 from .scanlator_group import ScanlatorGroup as ScanlatorGroup
 from .tags import *
-from .upload import ChapterUpload as ChapterUpload
 from .user import User as User
 from .utils import TAGS as MANGA_TAGS
 
@@ -57,6 +56,6 @@ class VersionInfo(NamedTuple):
     serial: int
 
 
-version_info: VersionInfo = VersionInfo(major=0, minor=3, micro=0, releaselevel="alpha", serial=0)
+version_info: VersionInfo = VersionInfo(major=0, minor=2, micro=1, releaselevel="final", serial=0)
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())

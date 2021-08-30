@@ -73,6 +73,7 @@ class ScanlatorGroup:
         "type",
         "_data",
         "_attributes",
+        "_relationships",
         "name",
         "_leader",
         "_members",
@@ -83,6 +84,7 @@ class ScanlatorGroup:
         "contact_email",
         "description",
         "locked",
+        "official",
         "version",
         "_created_at",
         "_updated_at",
@@ -92,10 +94,12 @@ class ScanlatorGroup:
         self._http = http
         data = payload["data"]
         attributes = data["attributes"]
+        relationships = data["relationships"]
         self.id: str = data["id"]
         self.type: Literal["scanlation_group"] = data["type"]
         self._data = data
         self._attributes = attributes
+        self._relationships = relationships
         self.name: str = attributes["name"]
         self._leader = attributes.get("leader", None)
         self._members = attributes.get("members", None)
@@ -106,6 +110,7 @@ class ScanlatorGroup:
         self.contact_email: Optional[str] = attributes["contactEmail"]
         self.description: Optional[str] = attributes["description"]
         self.locked: bool = attributes.get("locked", False)
+        self.official: bool = attributes["official"]
         self.version: int = attributes["version"]
         self._created_at = attributes["createdAt"]
         self._updated_at = attributes["updatedAt"]

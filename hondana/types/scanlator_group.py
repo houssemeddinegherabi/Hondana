@@ -61,6 +61,8 @@ class ScanlationGroupAttributesResponse(TypedDict):
 
     locked: :class:`bool`
 
+    official: :class:`bool`
+
     version: :class:`int`
 
     createdAt: :class:`str`
@@ -78,6 +80,7 @@ class ScanlationGroupAttributesResponse(TypedDict):
     contactEmail: Optional[str]
     description: Optional[str]
     locked: bool
+    official: bool
     version: int
     createdAt: str
     updatedAt: str
@@ -95,6 +98,7 @@ class ScanlationGroupResponse(TypedDict):
     id: str
     type: Literal["scanlation_group"]
     attributes: ScanlationGroupAttributesResponse
+    relationships: list[RelationshipResponse]
 
 
 class GetScanlationGroupResponse(TypedDict):
@@ -108,7 +112,6 @@ class GetScanlationGroupResponse(TypedDict):
 
     result: Literal["ok", "error"]
     data: ScanlationGroupResponse
-    relationships: list[RelationshipResponse]
 
 
 class GetScanlationGroupListResponse(TypedDict):
