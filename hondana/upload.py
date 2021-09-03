@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 
 
 class ChapterUpload:
-    def __init__(self, *, http: HTTPClient, manga_id: str, scanlator_groups: list[str]) -> None:
+    def __init__(self, *, http: HTTPClient, manga_id: str, scanlator_groups: Optional[list[str]]) -> None:
         self.http = http
         self.manga = manga_id
         self.groups = scanlator_groups
@@ -80,7 +80,8 @@ class ChapterUpload:
         data: dict[str, Union[str, list[str]]] = {
             "manga": self.manga,
         }
-        data["groups"] = self.groups
+        if self.groups:
+            data["groups"] = self.groups
 
         route = Route("POST", "/upload/begin")
         response: UploadBeginResponse = await self.http.request(route, data=data)
