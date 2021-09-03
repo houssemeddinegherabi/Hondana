@@ -56,6 +56,9 @@ ReadingStatus = Literal["reading", "on_hold", "plan_to_read", "dropped", "re_rea
 class MangaOrderQuery(TypedDict, total=False):
     volume: Literal["asc", "desc"]
     chapter: Literal["asc", "desc"]
+    createdAt: Literal["asc", "desc"]
+    updatedAt: Literal["asc", "desc"]
+    latestUploadedChapter: Literal["asc", "desc"]
 
 
 class MangaLinks(TypedDict, total=False):
@@ -161,19 +164,25 @@ class MangaAttributesResponse(MangaAttributesResponseOptional):
     updatedAt: str
 
 
-class MangaResponse(TypedDict):
+class _OptionalMangaResponse(TypedDict, total=False):
+    relationships: list[RelationshipResponse]
+
+
+class MangaResponse(_OptionalMangaResponse):
     """
     id: :class:`str`
 
     type: Literal[``"manga"``]
 
     attributes: :class:`MangaAttributesResponse`
+
+    relationships: List[:class:`RelationshipResponse`]
+        This key is optional.
     """
 
     id: str
     type: Literal["manga"]
     attributes: MangaAttributesResponse
-    relationships: list[RelationshipResponse]
 
 
 class ViewMangaResponse(TypedDict):
@@ -181,8 +190,6 @@ class ViewMangaResponse(TypedDict):
     result: Literal[``"ok"``, ``"error"``]
 
     data: :class:`MangaResponse`
-
-    relationships: List[:class:`RelationshipResponse`]
     """
 
     result: Literal["ok", "error"]

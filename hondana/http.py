@@ -59,6 +59,7 @@ from .utils import MISSING, TAGS, php_query_builder, to_json
 if TYPE_CHECKING:
     from .tags import QueryTags
     from .types import (
+        artist,
         author,
         chapter,
         common,
@@ -457,7 +458,7 @@ class HTTPClient:
         content_rating: Optional[list[manga.ContentRating]],
         created_at_since: Optional[datetime.datetime],
         updated_at_since: Optional[datetime.datetime],
-        order: Optional[OrderQuery],
+        order: Optional[manga.MangaOrderQuery],
         includes: Optional[list[manga.MangaIncludes]],
     ) -> Response[manga.MangaSearchResponse]:
         route = Route("GET", "/manga")
@@ -693,7 +694,9 @@ class HTTPClient:
         *,
         limit: int,
         offset: int,
-        translated_languages: Optional[list[str]],
+        translated_languages: Optional[list[common.LanguageCode]],
+        original_language: Optional[list[common.LanguageCode]],
+        excluded_original_language: Optional[list[common.LanguageCode]],
         content_rating: Optional[list[common.ContentRating]],
         created_at_since: Optional[datetime.datetime],
         updated_at_since: Optional[datetime.datetime],
@@ -712,6 +715,12 @@ class HTTPClient:
 
         if translated_languages:
             query["translatedLanguage"] = translated_languages
+
+        if original_language:
+            query["originalLanguage"] = original_language
+
+        if excluded_original_language:
+            query["excludedOriginalLanguage"] = excluded_original_language
 
         if content_rating:
             query["contentRating"] = content_rating
@@ -1155,9 +1164,19 @@ class HTTPClient:
 
         return self.request(route, json=query)
 
-    def _get_custom_list(self, custom_list_id: str, /) -> Response[custom_list.GetCustomListResponse]:
+    def _get_custom_list(
+        self, custom_list_id: str, /, *, includes: list[custom_list.CustomListIncludes]
+    ) -> Response[custom_list.GetCustomListResponse]:
         route = Route("GET", "/list/{custom_list_id}", custom_list_id=custom_list_id)
-        return self.request(route)
+
+        query = {}
+
+        if includes:
+            query["includes"] = includes
+
+        resolved_query = php_query_builder(query)
+
+        return self.request(route, params=resolved_query)
 
     def _update_custom_list(
         self,
@@ -1222,7 +1241,10 @@ class HTTPClient:
         *,
         limit: int,
         offset: int,
-        translated_languages: Optional[list[str]],
+        translated_languages: Optional[list[common.LanguageCode]],
+        original_language: Optional[list[common.LanguageCode]],
+        excluded_original_language: Optional[list[common.LanguageCode]],
+        content_rating: Optional[list[common.ContentRating]],
         created_at_since: Optional[datetime.datetime],
         updated_at_since: Optional[datetime.datetime],
         published_at_since: Optional[datetime.datetime],
@@ -1236,6 +1258,15 @@ class HTTPClient:
 
         if translated_languages:
             query["translatedLanguage"] = translated_languages
+
+        if original_language:
+            query["originalLanguage"] = original_language
+
+        if excluded_original_language:
+            query["excludedOriginalLanguage"] = excluded_original_language
+
+        if content_rating:
+            query["contentRating"] = content_rating
 
         if created_at_since:
             query["createdAtSince"] = to_iso_format(created_at_since)
@@ -1384,9 +1415,33 @@ class HTTPClient:
 
         return self.request(route, json=query)
 
-    def _get_author(self, author_id: str, /) -> Response[author.GetAuthorResponse]:
+    def _get_author(
+        self, author_id: str, /, *, includes: Optional[list[author.AuthorIncludes]]
+    ) -> Response[author.GetAuthorResponse]:
         route = Route("GET", "/author/{author_id}", author_id=author_id)
-        return self.request(route)
+
+        query = {}
+
+        if includes:
+            query["includes"] = includes
+
+        resolved_query = php_query_builder(query)
+
+        return self.request(route, params=resolved_query)
+
+    def _get_artist(
+        self, author_id: str, /, *, includes: Optional[list[artist.ArtistIncludes]]
+    ) -> Response[artist.GetArtistResponse]:
+        route = Route("GET", "/author/{author_id}", author_id=author_id)
+
+        query = {}
+
+        if includes:
+            query["includes"] = includes
+
+        resolved_query = php_query_builder(query)
+
+        return self.request(route, params=resolved_query)
 
     def _update_author(self, author_id, /, *, name: Optional[str], version: int) -> Response[author.GetAuthorResponse]:
         route = Route("PUT", "/author/{author_id}", author_id=author_id)
